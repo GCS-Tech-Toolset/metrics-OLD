@@ -1,0 +1,39 @@
+version: "3"
+services:
+  grafana:
+    image: grafana/grafana
+    container_name: grafana
+    ports:
+      - 3000:3000
+    networks:
+      - grafana_network
+    volumes:
+      - grafana_data:/var/lib/grafana
+    depends_on:
+      - influxdb
+
+  influxdb:
+    image: influxdb:1.7
+    container_name: influxdb
+    ports:
+      - 8086:8086
+    networks:
+      - grafana_network
+    volumes:
+      - influxdb_data:/var/lib/influxdb
+    environment:
+      - INFLUXDB_DB=grafana
+      - INFLUXDB_USER=influxuser
+      - INFLUXDB_USER_PASSWORD=influxpasword
+      - INFLUXDB_ADMIN_ENABLE=true
+      - INFLUXDB_AMDIN_USER=admin
+      - INFLUXDB_AMDIN_PASSWORD=admin
+
+
+networks:
+  grafana_network:
+
+volumes:
+  grafana_data:
+  influxdb_data:
+
