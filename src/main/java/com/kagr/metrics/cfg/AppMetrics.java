@@ -24,11 +24,11 @@ import org.jasypt.util.text.BasicTextEncryptor;
 
 
 import io.micrometer.core.instrument.Clock;
-import io.micrometer.core.instrument.MeterRegistry;
 import io.micrometer.core.instrument.binder.jvm.JvmGcMetrics;
 import io.micrometer.core.instrument.binder.jvm.JvmMemoryMetrics;
 import io.micrometer.core.instrument.binder.jvm.JvmThreadMetrics;
 import io.micrometer.core.instrument.binder.system.ProcessorMetrics;
+import io.micrometer.core.instrument.composite.CompositeMeterRegistry;
 import io.micrometer.influx.InfluxConfig;
 import io.micrometer.influx.InfluxMeterRegistry;
 import lombok.Data;
@@ -48,7 +48,7 @@ public class AppMetrics
     private static final long serialVersionUID = 1741838256855050257L;
 
 
-    @Getter private MeterRegistry _registry;
+    @Getter private CompositeMeterRegistry _registry;
 
 
     private String _dbName;
@@ -69,7 +69,7 @@ public class AppMetrics
 
     private AppMetrics()
     {
-
+        _registry = new CompositeMeterRegistry(Clock.SYSTEM);
     }
 
 
@@ -216,7 +216,8 @@ public class AppMetrics
 
 
 
-        _registry = new InfluxMeterRegistry(cfg, Clock.SYSTEM);
+        _registry.add(new InfluxMeterRegistry(cfg, Clock.SYSTEM));
+
         new JvmMemoryMetrics().bindTo(_registry);
         new JvmGcMetrics().bindTo(_registry);
         new ProcessorMetrics().bindTo(_registry);
