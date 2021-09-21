@@ -1,4 +1,19 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <appname>
+  <AppMetrics>
+    <Enabled>true</Enabled>
+    <AppName>TESTAPP</AppName>
+    <AutoCreateDb>true</AutoCreateDb>
+    <BatchSizing>1000</BatchSizing>
+    <ReportingFrequencyInSeconds>5</ReportingFrequencyInSeconds>
 
+
+    <DB>
+      <Name>test-db</Name>
+      <UserName>ee6SHf2cfaEgkYpJsQNZHUSPvpJ81ScU</UserName>
+      <Pasword>qaBernNglWl3GmR7m7KUz1bQZstYXPpz</Pasword>
+      <URI>http://localhost:8086</URI>
+    </DB>
+
+  </AppMetrics>
 </appname>

@@ -2,7 +2,7 @@
 <XXX>
 
   <AppMetrics>
-    <Enabled>true</Enabled>
+    <Enabled>false</Enabled>
     <AutoCreateDb>true</AutoCreateDb>
     <BatchSizing>1000</BatchSizing>
     <ReportingFrequencyInSeconds>5</ReportingFrequencyInSeconds>
