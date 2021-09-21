@@ -29,6 +29,8 @@ import io.micrometer.core.instrument.binder.jvm.JvmMemoryMetrics;
 import io.micrometer.core.instrument.binder.jvm.JvmThreadMetrics;
 import io.micrometer.core.instrument.binder.system.ProcessorMetrics;
 import io.micrometer.core.instrument.composite.CompositeMeterRegistry;
+import io.micrometer.core.instrument.simple.SimpleConfig;
+import io.micrometer.core.instrument.simple.SimpleMeterRegistry;
 import io.micrometer.influx.InfluxConfig;
 import io.micrometer.influx.InfluxMeterRegistry;
 import lombok.Data;
@@ -40,8 +42,7 @@ import lombok.extern.slf4j.Slf4j;
 
 
 
-@Slf4j
-@Data
+@Slf4j @Data
 public class AppMetrics
 {
 
@@ -50,6 +51,7 @@ public class AppMetrics
 
     @Getter private CompositeMeterRegistry _registry;
 
+    private String _appName;
 
     private String _dbName;
     private String _dbUsername;
@@ -81,12 +83,14 @@ public class AppMetrics
         AppMetrics appM = getInstance();
 
         appM.setEnabled(cfg_.getBoolean("AppMetrics.Enabled", true));
+        appM._registry.add(new SimpleMeterRegistry(SimpleConfig.DEFAULT, Clock.SYSTEM));
         if (!appM.isEnabled())
         {
             if (_logger.isDebugEnabled())
             {
                 _logger.debug("application metrics are not enabled, no further configuration will be read/applied");
             }
+            
             return appM;
         }
 
@@ -132,15 +136,17 @@ public class AppMetrics
         }
 
 
-        _dbName = decrypt(cfg_, buildKey("DB.Name"), "grafana");
         _dbUsername = decrypt(cfg_, buildKey("DB.UserName"), "grafana");
         _dbPassword = decrypt(cfg_, buildKey("DB.Pasword"), "grafana");
+        _dbName = cfg_.getString(buildKey("DB.Name"), "grafana");
         _uri = cfg_.getString(buildKey("URI"), "http://localhost:8086");
+        _appName = cfg_.getString(buildKey("AppName"), "tradesys-app");
 
         _autoCreateDb = cfg_.getBoolean(buildKey("AutoCreateDb"), true);
 
         _batchSize = cfg_.getInt(buildKey("BatchSizing"), 1000);
         _reportingFrequencyInSeconds = cfg_.getInt(buildKey("ReportingFrequencyInSeconds"), 5);
+
     }
 
 
@@ -149,6 +155,12 @@ public class AppMetrics
 
     private void configureRegistry()
     {
+        if (!_enabled)
+        {
+            _logger.warn("influx metrics not enabled!");
+            return;
+        }
+
         InfluxConfig cfg = new InfluxConfig()
         {
             @Override
@@ -213,8 +225,6 @@ public class AppMetrics
 
         // Write consistency for each point.
         System.setProperty("management.metrics.export.influx.consistency", "one");
-
-
 
         _registry.add(new InfluxMeterRegistry(cfg, Clock.SYSTEM));
 
