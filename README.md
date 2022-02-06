@@ -29,6 +29,15 @@ docker exec -it influxdb influx
 ```
 
 
+add the following to `AppProps.java`:
+
+```java
+@Getter @Setter private AppMetrics _metrics
+...
+...
+_metrics = AppMetrics.initFromCong(configFile);
+```
+
 # Maven
 
 ```xml

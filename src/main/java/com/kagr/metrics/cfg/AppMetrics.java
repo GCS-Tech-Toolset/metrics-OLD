@@ -23,7 +23,9 @@ import org.jasypt.util.text.BasicTextEncryptor;
 
 
 
+import io.micrometer.core.aop.TimedAspect;
 import io.micrometer.core.instrument.Clock;
+import io.micrometer.core.instrument.Timer;
 import io.micrometer.core.instrument.binder.jvm.JvmGcMetrics;
 import io.micrometer.core.instrument.binder.jvm.JvmMemoryMetrics;
 import io.micrometer.core.instrument.binder.jvm.JvmThreadMetrics;
@@ -84,13 +86,14 @@ public class AppMetrics
 
         appM.setEnabled(cfg_.getBoolean("AppMetrics.Enabled", true));
         appM._registry.add(new SimpleMeterRegistry(SimpleConfig.DEFAULT, Clock.SYSTEM));
+        new TimedAspect(appM._registry);
         if (!appM.isEnabled())
         {
             if (_logger.isDebugEnabled())
             {
                 _logger.debug("application metrics are not enabled, no further configuration will be read/applied");
             }
-            
+
             return appM;
         }
 
@@ -99,6 +102,26 @@ public class AppMetrics
 
 
         return appM;
+    }
+
+
+
+
+
+    public Timer createTime(@NonNull String name_, String[] tags_)
+    {
+        if (_logger.isTraceEnabled())
+        {
+            _logger.trace("building timer:{}", name_);
+        }
+        
+        
+        return Timer
+                .builder(name_)
+                .tags(tags_)
+                .description("a description of what this timer does") // optional
+                .publishPercentileHistogram()
+                .register(_registry);
     }
 
 
