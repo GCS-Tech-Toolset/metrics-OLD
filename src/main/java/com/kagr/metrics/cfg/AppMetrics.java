@@ -14,6 +14,7 @@ package com.kagr.metrics.cfg;
 
 
 import java.time.Duration;
+import java.util.concurrent.atomic.AtomicLong;
 
 
 
@@ -25,6 +26,7 @@ import org.jasypt.util.text.BasicTextEncryptor;
 
 import io.micrometer.core.aop.TimedAspect;
 import io.micrometer.core.instrument.Clock;
+import io.micrometer.core.instrument.Counter;
 import io.micrometer.core.instrument.Timer;
 import io.micrometer.core.instrument.binder.jvm.JvmGcMetrics;
 import io.micrometer.core.instrument.binder.jvm.JvmMemoryMetrics;
@@ -73,7 +75,15 @@ public class AppMetrics
 
     private AppMetrics()
     {
-        _registry = new CompositeMeterRegistry(Clock.SYSTEM);
+        try
+        {
+            _registry = new CompositeMeterRegistry(Clock.SYSTEM);
+        }
+        catch (Exception ex_)
+        {
+            _logger.error(ex_.toString(), ex_);
+            throw new RegistryNotReadyException("AppMetrics::AppMetrics() - registy not ready!");
+        }
     }
 
 
@@ -108,14 +118,19 @@ public class AppMetrics
 
 
 
-    public Timer createTime(@NonNull String name_, String[] tags_)
+    public Timer createTimer(@NonNull String name_, String[] tags_)
     {
+        if (_registry == null)
+        {
+            throw new RegistryNotReadyException("createTimer - registy not ready!");
+        }
+
         if (_logger.isTraceEnabled())
         {
             _logger.trace("building timer:{}", name_);
         }
-        
-        
+
+
         return Timer
                 .builder(name_)
                 .tags(tags_)
@@ -128,14 +143,40 @@ public class AppMetrics
 
 
 
-    private String buildKey(@NonNull String key_)
+    public AtomicLong createGauge(@NonNull String name_)
     {
-        String key = String.format("AppMetrics.%s", key_);
+        if (_registry == null)
+        {
+            throw new RegistryNotReadyException("createTimer - registy not ready!");
+        }
+
         if (_logger.isTraceEnabled())
         {
-            _logger.trace("key:{}", key);
+            _logger.trace("building timer:{}", name_);
         }
-        return key;
+
+        AtomicLong val = new AtomicLong(0);
+        _registry.gauge(name_, val);
+        return val;
+    }
+
+
+
+
+
+    public Counter createCounter(@NonNull String name_)
+    {
+        if (_registry == null)
+        {
+            throw new RegistryNotReadyException("createTimer - registy not ready!");
+        }
+
+        if (_logger.isTraceEnabled())
+        {
+            _logger.trace("building timer:{}", name_);
+        }
+
+        return _registry.counter(name_);
     }
 
 
@@ -170,6 +211,20 @@ public class AppMetrics
         _batchSize = cfg_.getInt(buildKey("BatchSizing"), 1000);
         _reportingFrequencyInSeconds = cfg_.getInt(buildKey("ReportingFrequencyInSeconds"), 5);
 
+    }
+
+
+
+
+
+    private String buildKey(@NonNull String key_)
+    {
+        String key = String.format("AppMetrics.%s", key_);
+        if (_logger.isTraceEnabled())
+        {
+            _logger.trace("key:{}", key);
+        }
+        return key;
     }
 
 
