@@ -118,6 +118,15 @@ public class AppMetrics
 
 
 
+    public Timer createTimer(@NonNull String name_)
+    {
+        return createTimer(name_, null);
+    }
+
+
+
+
+
     public Timer createTimer(@NonNull String name_, String[] tags_)
     {
         if (_registry == null)
