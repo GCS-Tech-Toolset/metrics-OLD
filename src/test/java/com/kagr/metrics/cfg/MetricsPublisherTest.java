@@ -3,7 +3,15 @@
  * DSCRPT: 
  ****************************************************************************/
 
+
+
+
+
 package com.kagr.metrics.cfg;
+
+
+
+
 
 import org.apache.commons.configuration2.XMLConfiguration;
 import org.apache.commons.configuration2.builder.FileBasedConfigurationBuilder;
@@ -43,7 +51,7 @@ public class MetricsPublisherTest
 
             try
             {
-                Thread.sleep(1000000000);
+                Thread.sleep(10_000);
             }
             catch (InterruptedException ex_)
             {
