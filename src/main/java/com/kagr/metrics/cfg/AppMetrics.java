@@ -173,7 +173,7 @@ public class AppMetrics
 
 
 
-    public Counter createCounter(@NonNull String name_)
+    public Counter createCounter(@NonNull String name_, String[] tags_)
     {
         if (_registry == null)
         {
@@ -185,7 +185,16 @@ public class AppMetrics
             _logger.trace("building timer:{}", name_);
         }
 
-        return _registry.counter(name_);
+        return _registry.counter(name_, tags_);
+    }
+
+
+
+
+
+    public Counter createCounter(@NonNull String name_)
+    {
+        return createCounter(name_, null);
     }
 
 
