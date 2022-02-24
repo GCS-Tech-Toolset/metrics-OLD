@@ -150,7 +150,7 @@
 			  <artifactId>maven-release-plugin</artifactId>
 			  <configuration>
 			    <goals>install</goals>
-			    <localRepoDirectory>~/tmp/GCS</localRepoDirectory>
+			    <!--localRepoDirectory>~/tmp/GCS</localRepoDirectory-->
 			  </configuration>
 			</plugin>
 		</plugins>
