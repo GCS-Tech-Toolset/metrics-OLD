@@ -9,10 +9,10 @@
     <version>1.0.1-SNAPSHOT</version>
 
     <scm>
-        <connection>scm:git:ssh://git@github.com-kevgol0:kevgol0/metrics.git</connection>
-        <developerConnection>scm:git:ssh://git@github.com-kevgol0:kevgol0/metrics.git</developerConnection>
-        <url>https://github.com/kevgol0/metrics.git</url>
-        <tag>metrics-1.0.0</tag>
+        <connection>cm:git:git@github.com-gcs:GCS-Tech/gcs-metrics.git</connection>
+        <developerConnection>scm:git:git@github.com-gcs:GCS-Tech/gcs-metrics.git</developerConnection>
+        <url>https://github.com/GCS-Tech/gcs-metrics.git</url>
+        <tag>${project.version}</tag>
     </scm>
 
 
