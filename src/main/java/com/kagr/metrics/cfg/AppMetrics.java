@@ -16,17 +16,18 @@ package com.kagr.metrics.cfg;
 import java.time.Duration;
 import java.util.concurrent.atomic.AtomicLong;
 
-
-
 import org.apache.commons.configuration2.XMLConfiguration;
+import org.apache.commons.configuration2.builder.FileBasedConfigurationBuilder;
+import org.apache.commons.configuration2.builder.fluent.Parameters;
+import org.apache.commons.configuration2.convert.DefaultListDelimiterHandler;
+import org.apache.commons.configuration2.ex.ConfigurationException;
 import org.apache.commons.lang3.StringUtils;
 import org.jasypt.util.text.BasicTextEncryptor;
-
-
 
 import io.micrometer.core.aop.TimedAspect;
 import io.micrometer.core.instrument.Clock;
 import io.micrometer.core.instrument.Counter;
+import io.micrometer.core.instrument.MeterRegistry.Config;
 import io.micrometer.core.instrument.Timer;
 import io.micrometer.core.instrument.binder.jvm.JvmGcMetrics;
 import io.micrometer.core.instrument.binder.jvm.JvmMemoryMetrics;
@@ -46,14 +47,16 @@ import lombok.extern.slf4j.Slf4j;
 
 
 
-@Slf4j @Data
+@Slf4j
+@Data
 public class AppMetrics
 {
 
     private static final long serialVersionUID = 1741838256855050257L;
 
 
-    @Getter private CompositeMeterRegistry _registry;
+    @Getter
+    private CompositeMeterRegistry _registry;
 
     private String _appName;
 
@@ -90,8 +93,37 @@ public class AppMetrics
 
 
 
+    public static final AppMetrics initFromConfig(String cfg_)
+    {
+        try
+        {
+            _logger.info("loading config from:{}", cfg_);
+            final Parameters params = new Parameters();
+            final FileBasedConfigurationBuilder<XMLConfiguration> builder = new FileBasedConfigurationBuilder<XMLConfiguration>(XMLConfiguration.class)
+                .configure(params.xml()
+                    .setThrowExceptionOnMissing(false)
+                    .setEncoding("UTF-8")
+                    .setListDelimiterHandler(new DefaultListDelimiterHandler(';'))
+                    .setValidating(false)
+                    .setFileName(cfg_));
+            final XMLConfiguration config = builder.getConfiguration();
+            return initFromConfig(config);
+        }
+        catch (ConfigurationException ex_)
+        {
+            _logger.error(ex_.toString(), ex_);
+        }
+
+        return null;
+    }
+
+
+
+
+
     public static final AppMetrics initFromConfig(XMLConfiguration cfg_)
     {
+
         AppMetrics appM = getInstance();
 
         appM.setEnabled(cfg_.getBoolean("AppMetrics.Enabled", true));
@@ -141,11 +173,11 @@ public class AppMetrics
 
 
         return Timer
-                .builder(name_)
-                .tags(tags_)
-                .description("a description of what this timer does") // optional
-                .publishPercentileHistogram()
-                .register(_registry);
+            .builder(name_)
+            .tags(tags_)
+            .description("a description of what this timer does") // optional
+            .publishPercentileHistogram()
+            .register(_registry);
     }
 
 
@@ -221,13 +253,21 @@ public class AppMetrics
         _dbUsername = decrypt(cfg_, buildKey("DB.UserName"), "grafana");
         _dbPassword = decrypt(cfg_, buildKey("DB.Pasword"), "grafana");
         _dbName = cfg_.getString(buildKey("DB.Name"), "grafana");
-        _uri = cfg_.getString(buildKey("URI"), "http://localhost:8086");
+        _uri = cfg_.getString(buildKey("DB.URI"));
         _appName = cfg_.getString(buildKey("AppName"), "tradesys-app");
 
         _autoCreateDb = cfg_.getBoolean(buildKey("AutoCreateDb"), true);
 
         _batchSize = cfg_.getInt(buildKey("BatchSizing"), 1000);
         _reportingFrequencyInSeconds = cfg_.getInt(buildKey("ReportingFrequencyInSeconds"), 5);
+
+
+        if (_logger.isInfoEnabled())
+        {
+            _logger.info("app-name:{}", _appName);
+            _logger.info("URI:{}", _uri);
+            _logger.info("database:{}", _dbName);
+        }
 
     }
 
@@ -284,6 +324,18 @@ public class AppMetrics
             {
                 return null;
             }
+
+
+
+
+
+            @Override
+            public String uri()
+            {
+                return _uri;
+            }
+
+
         };
 
         // # Whether to create the Influx database if it does not exist before attempting to publish metrics to it.
@@ -323,6 +375,8 @@ public class AppMetrics
         System.setProperty("management.metrics.export.influx.consistency", "one");
 
         _registry.add(new InfluxMeterRegistry(cfg, Clock.SYSTEM));
+        Config c = _registry.config();
+
 
         new JvmMemoryMetrics().bindTo(_registry);
         new JvmGcMetrics().bindTo(_registry);
@@ -359,6 +413,10 @@ public class AppMetrics
     {
         return SingletonAppMetrics._instance;
     }
+
+
+
+
 
     private static final class SingletonAppMetrics
     {
