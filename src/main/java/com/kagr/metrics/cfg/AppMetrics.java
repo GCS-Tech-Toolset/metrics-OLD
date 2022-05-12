@@ -253,6 +253,7 @@ public class AppMetrics
         }
 
 
+        _dbName = cfg_.getString(buildKey("DB.Name"));
         boolean encryptedCreds = cfg_.getBoolean(buildKey("EncryptedCredentials"), false);
         if (encryptedCreds)
         {
