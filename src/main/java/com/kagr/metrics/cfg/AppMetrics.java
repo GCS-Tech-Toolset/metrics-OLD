@@ -59,8 +59,7 @@ public class AppMetrics
     private static final long serialVersionUID = 1741838256855050257L;
 
 
-    @Getter
-    private CompositeMeterRegistry _registry;
+    @Getter private CompositeMeterRegistry _registry;
 
     private String _appName;
 
@@ -104,12 +103,12 @@ public class AppMetrics
             _logger.info("loading config from:{}", cfg_);
             final Parameters params = new Parameters();
             final FileBasedConfigurationBuilder<XMLConfiguration> builder = new FileBasedConfigurationBuilder<XMLConfiguration>(XMLConfiguration.class)
-                .configure(params.xml()
-                    .setThrowExceptionOnMissing(false)
-                    .setEncoding("UTF-8")
-                    .setListDelimiterHandler(new DefaultListDelimiterHandler(';'))
-                    .setValidating(false)
-                    .setFileName(cfg_));
+                    .configure(params.xml()
+                            .setThrowExceptionOnMissing(false)
+                            .setEncoding("UTF-8")
+                            .setListDelimiterHandler(new DefaultListDelimiterHandler(';'))
+                            .setValidating(false)
+                            .setFileName(cfg_));
             final XMLConfiguration config = builder.getConfiguration();
             return initFromConfig(config);
         }
@@ -177,11 +176,11 @@ public class AppMetrics
 
 
         return Timer
-            .builder(name_)
-            .tags(tags_)
-            .description("a description of what this timer does") // optional
-            .publishPercentileHistogram()
-            .register(_registry);
+                .builder(name_)
+                .tags(tags_)
+                .description("a description of what this timer does") // optional
+                .publishPercentileHistogram()
+                .register(_registry);
     }
 
 
@@ -254,14 +253,21 @@ public class AppMetrics
         }
 
 
-        _dbUsername = cfg_.getString(buildKey("DB.UserName"), "grafana");
-        _dbPassword = cfg_.getString(buildKey("DB.Pasword"), "grafana");
-        _dbName = cfg_.getString(buildKey("DB.Name"), "grafana");
+        boolean encryptedCreds = cfg_.getBoolean(buildKey("EncryptedCredentials"), false);
+        if (encryptedCreds)
+        {
+            _dbUsername = decrypt(cfg_, buildKey("DB.UserName"), "grafana");
+            _dbPassword = decrypt(cfg_, buildKey("DB.Pasword"), "grafana");
+        }
+        else
+        {
+            _dbUsername = cfg_.getString(buildKey("DB.UserName"), "grafana");
+            _dbPassword = cfg_.getString(buildKey("DB.Pasword"), "grafana");
+        }
+
         _uri = cfg_.getString(buildKey("DB.URI"));
-        _appName = cfg_.getString(buildKey("AppName"), "tradesys-app");
-
+        _appName = cfg_.getString(buildKey("AppName"), "AppName");
         _autoCreateDb = cfg_.getBoolean(buildKey("AutoCreateDb"), true);
-
         _batchSize = cfg_.getInt(buildKey("BatchSizing"), 1000);
         _reportingFrequencyInSeconds = cfg_.getInt(buildKey("ReportingFrequencyInSeconds"), 5);
 
@@ -385,7 +391,7 @@ public class AppMetrics
         new ProcessorMetrics().bindTo(_registry);
         new JvmThreadMetrics().bindTo(_registry);
         new JvmCompilationMetrics().bindTo(_registry);
-        
+
     }
 
 
