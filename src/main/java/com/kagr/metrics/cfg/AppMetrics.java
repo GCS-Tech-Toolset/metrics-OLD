@@ -254,8 +254,8 @@ public class AppMetrics
         }
 
 
-        _dbUsername = decrypt(cfg_, buildKey("DB.UserName"), "grafana");
-        _dbPassword = decrypt(cfg_, buildKey("DB.Pasword"), "grafana");
+        _dbUsername = cfg_.getString(buildKey("DB.UserName"), "grafana");
+        _dbPassword = cfg_.getString(buildKey("DB.Pasword"), "grafana");
         _dbName = cfg_.getString(buildKey("DB.Name"), "grafana");
         _uri = cfg_.getString(buildKey("DB.URI"));
         _appName = cfg_.getString(buildKey("AppName"), "tradesys-app");
