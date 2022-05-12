@@ -16,6 +16,8 @@ package com.kagr.metrics.cfg;
 import java.time.Duration;
 import java.util.concurrent.atomic.AtomicLong;
 
+
+
 import org.apache.commons.configuration2.XMLConfiguration;
 import org.apache.commons.configuration2.builder.FileBasedConfigurationBuilder;
 import org.apache.commons.configuration2.builder.fluent.Parameters;
@@ -24,11 +26,13 @@ import org.apache.commons.configuration2.ex.ConfigurationException;
 import org.apache.commons.lang3.StringUtils;
 import org.jasypt.util.text.BasicTextEncryptor;
 
+
+
 import io.micrometer.core.aop.TimedAspect;
 import io.micrometer.core.instrument.Clock;
 import io.micrometer.core.instrument.Counter;
-import io.micrometer.core.instrument.MeterRegistry.Config;
 import io.micrometer.core.instrument.Timer;
+import io.micrometer.core.instrument.binder.jvm.JvmCompilationMetrics;
 import io.micrometer.core.instrument.binder.jvm.JvmGcMetrics;
 import io.micrometer.core.instrument.binder.jvm.JvmMemoryMetrics;
 import io.micrometer.core.instrument.binder.jvm.JvmThreadMetrics;
@@ -375,13 +379,13 @@ public class AppMetrics
         System.setProperty("management.metrics.export.influx.consistency", "one");
 
         _registry.add(new InfluxMeterRegistry(cfg, Clock.SYSTEM));
-        Config c = _registry.config();
-
 
         new JvmMemoryMetrics().bindTo(_registry);
         new JvmGcMetrics().bindTo(_registry);
         new ProcessorMetrics().bindTo(_registry);
         new JvmThreadMetrics().bindTo(_registry);
+        new JvmCompilationMetrics().bindTo(_registry);
+        
     }
 
 
