@@ -7,8 +7,8 @@
 	<version>1.0.2</version>
 
     <scm>
-		<connection>cm:git:git@github.com-gcs:GCS-Tech/gcs-metrics.git</connection>
-		<developerConnection>scm:git:git@github.com-gcs:GCS-Tech/gcs-metrics.git</developerConnection>
+		<connection>cm:git:git@github.com:GCS-Tech/gcs-metrics.git</connection>
+		<developerConnection>scm:git:git@github.com:GCS-Tech/gcs-metrics.git</developerConnection>
 		<url>https://github.com/GCS-Tech/gcs-metrics.git</url>
 		<tag>metrics-1.0.2</tag>
     </scm>
