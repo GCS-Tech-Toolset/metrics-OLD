@@ -48,7 +48,6 @@ import io.micrometer.influx.InfluxMeterRegistry;
 import lombok.Data;
 import lombok.Getter;
 import lombok.NonNull;
-import lombok.experimental.var;
 import lombok.extern.slf4j.Slf4j;
 
 
