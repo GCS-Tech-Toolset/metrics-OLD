@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<XXX>
+  <AppName>UnitTests</AppName>
+  <Environment>junit</Environment>
+
+  <AppMetrics>
+    <Enabled>true</Enabled>
+    <Registry>Datadog</Registry>
+    <ReportingFrequencyInSeconds>5</ReportingFrequencyInSeconds>
+
+
+    <Datadog>
+      <HostIP>127.0.0.1</HostIP>
+      <Port>8125</Port>
+    </Datadog>
+
+  </AppMetrics>
+</XXX>

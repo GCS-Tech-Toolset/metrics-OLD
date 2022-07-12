@@ -11,21 +11,35 @@ docker exec -it influxdb influx
 
 # Config sections
 
+## Influx properties
 ```xml
-	<AppMetrics>
-		<Enabled>true</Enabled>
-		<AutoCreateDb>true</AutoCreateDb>
-		<BatchSizing>1000</BatchSizing>
-		<ReportingFrequencyInSeconds>5</ReportingFrequencyInSeconds>
+  <AppMetrics>
+    <Enabled>true</Enabled>
+    <Registry>DataDog</Registry>
+    <ReportingFrequencyInSeconds>5</ReportingFrequencyInSeconds>
+    
+    <Datadog>
+        <HostIP>${env:DATADOG_HOST_IP}</HostIP>
+        <Port>8125</Port>
+    </Datadog>
+  </AppMetrics>
+```
+## Datadog properties
+```xml
+  <AppMetrics>
+    <Enabled>true</Enabled>
+    <Registry>Influx</Registry>
+    <ReportingFrequencyInSeconds>5</ReportingFrequencyInSeconds>
 
-
-		<DB>
-			<Name>stoch-osc</Name>
-			<UserName>ee6SHf2cfaEgkYpJsQNZHUSPvpJ81ScU</UserName>
-			<Pasword>qaBernNglWl3GmR7m7KUz1bQZstYXPpz</Pasword>
-			<URI>http://localhost:8086</URI>
-		</DB>
-	</AppMetrics>
+    <Influx>
+        <Name>SomeName_${env:ENVIRONMENT}</Name>
+        <UserName>${env:INFLUX_USERNAME}</UserName>
+        <Pasword>${env:INFLUX_PASSWORD}</Pasword>
+        <URI>${env:INFLUX_HOST_AND_PORT}</URI>
+        <AutoCreateDb>true</AutoCreateDb>
+        <BatchSizing>1000</BatchSizing>
+    </Influx>
+  </AppMetrics>
 ```
 
 
@@ -41,9 +55,9 @@ _metrics = AppMetrics.initFromCong(configFile);
 # Maven
 
 ```xml
-		<dependency>
-			<groupId>kagr</groupId>
-			<artifactId>metrics</artifactId>
-			<version>1.0.0</version>
-		</dependency>
+    <dependency>
+        <groupId>gcs.toolset</groupId>
+        <artifactId>metrics</artifactId>
+        <version>1.0.3</version>
+    </dependency>
 ```
