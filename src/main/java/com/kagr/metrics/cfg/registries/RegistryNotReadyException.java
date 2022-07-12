@@ -17,7 +17,7 @@
 
 
 
-package com.kagr.metrics.cfg;
+package com.kagr.metrics.cfg.registries;
 
 
 

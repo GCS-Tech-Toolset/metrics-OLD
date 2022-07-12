@@ -18,6 +18,7 @@ import org.apache.commons.configuration2.builder.FileBasedConfigurationBuilder;
 import org.apache.commons.configuration2.builder.fluent.Parameters;
 import org.apache.commons.configuration2.convert.DefaultListDelimiterHandler;
 import org.apache.commons.configuration2.ex.ConfigurationException;
+import org.junit.Ignore;
 import org.junit.Test;
 
 
@@ -33,6 +34,7 @@ public class MetricsPublisherTest
 {
 
     @Test
+    @Ignore
     public void test()
     {
         try

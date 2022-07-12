@@ -13,6 +13,7 @@ package com.kagr.metrics.cfg;
 
 
 
+import com.kagr.metrics.cfg.properties.InfluxMetricsProps;
 import org.apache.commons.configuration2.XMLConfiguration;
 import org.apache.commons.configuration2.builder.FileBasedConfigurationBuilder;
 import org.apache.commons.configuration2.builder.fluent.Parameters;
@@ -48,9 +49,9 @@ public class AppMetricsTest
                             .setFileName("./src/test/resources/junit-metrics.xml"));
             final XMLConfiguration config = builder.getConfiguration();
             AppMetrics metrics = AppMetrics.initFromConfig(config);
-            Assert.assertEquals(metrics.isEnabled(), true);
-            Assert.assertEquals(metrics.getBatchSize(), 1000);
-            Assert.assertEquals(metrics.getDbUsername(), "influxuser");
+            Assert.assertEquals(metrics.getMetricsConfig().isEnabled(), true);
+            Assert.assertEquals(((InfluxMetricsProps)metrics.getMetricsConfig()).getBatchSize(), 1000);
+            Assert.assertEquals(((InfluxMetricsProps)metrics.getMetricsConfig()).getDbUsername(), "ee6SHf2cfaEgkYpJsQNZHUSPvpJ81ScU");
         }
         catch (ConfigurationException ex_)
         {
