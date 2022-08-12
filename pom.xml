@@ -4,7 +4,7 @@
     <modelVersion>4.0.0</modelVersion>
     <groupId>gcs.toolset</groupId>
     <artifactId>metrics</artifactId>
-	<version>1.0.4</version>
+	<version>1.0.5</version>
 
     <scm>
 		<connection>cm:git:git@github.com:GCS-Tech/gcs-metrics.git</connection>
@@ -112,8 +112,8 @@
 		<version>3.8.0</version>
 
 		<configuration>
-		  <source>12</source>
-		  <target>12</target>
+		  <source>11</source>
+		  <target>11</target>
 		  <encoding>UTF-8</encoding>
 		  <compilerArgs>
 		    <arg>--add-exports=java.base/jdk.internal.ref=ALL-UNNAMED</arg>
