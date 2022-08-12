@@ -4,7 +4,7 @@
     <modelVersion>4.0.0</modelVersion>
     <groupId>gcs.toolset</groupId>
     <artifactId>metrics</artifactId>
-	<version>1.0.3</version>
+	<version>1.0.4</version>
 
     <scm>
 		<connection>cm:git:git@github.com:GCS-Tech/gcs-metrics.git</connection>
@@ -91,6 +91,18 @@
 
     </dependencies>
 
+    <distributionManagement>
+        <repository>
+            <id>q5id-central</id>
+            <name>q5id-libs-release</name>
+            <url>https://gcsrepo.jfrog.io/artifactory/q5id-libs-release-local</url>
+        </repository>
+        <snapshotRepository>
+            <id>q5id-snapshot</id>
+            <name>q5id-libs-shapshot</name>
+            <url>https://gcsrepo.jfrog.io/artifactory/q5id-libs-snapshot-local</url>
+        </snapshotRepository>
+    </distributionManagement>
 
     <build>
         <plugins>
@@ -173,7 +185,6 @@
                     </filters>
                 </configuration>
             </plugin>
-
 
         </plugins>
     </build>
